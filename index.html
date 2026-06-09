@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIDER MANAGER v1.1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #111111;
+            --bg: #f4f6f8;
+            --card: #ffffff;
+            --border: #cccccc;
+            --accent: #0066cc;
+            --danger: #cc0000;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .version {
+            font-size: 14px;
+            background: var(--primary);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .input-agrupacion {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px;
+            border: 1px dashed var(--border);
+            width: 350px;
+            text-transform: uppercase;
+        }
+
+        /* Diseño Adaptable (Responsive Grid) */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            margin-top: 0;
+            font-size: 16px;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .radio-label, .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #eee;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: none;
+        }
+
+        .radio-label input, .checkbox-label input {
+            margin: 0;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #333333;
+        }
+
+        .btn-export {
+            background: #2e7d32;
+            margin-top: 10px;
+        }
+        .btn-export:hover {
+            background: #1b5e20;
+        }
+
+        /* Lista de filas añadidas con opción de editar/borrar */
+        .fila-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        .fila-info {
+            flex-grow: 1;
+        }
+
+        .fila-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .btn-edit { background: var(--accent); color: white; }
+        .btn-del { background: var(--danger); color: white; }
+
+        /* Contenedor del Escenario y Vista Previa del Rider */
+        .stage-preview {
+            background: #ffffff;
+            border: 2px solid var(--primary);
+            padding: 30px;
+            border-radius: 8px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .stage-title {
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        /* Representación abstracta del plano de filas */
+        .stage-canvas {
+            border: 1px dashed var(--border);
+            flex-grow: 1;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: #fafafa;
+            gap: 15px;
+        }
+
+        .stage-row-visual {
+            width: 90%;
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stage-row-visual.forma-recta {
+            border-radius: 4px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid var(--border);
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .summary-table th {
+            background: #eeeeee;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* Créditos Sutiles */
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            color: #666666;
+            text-transform: uppercase;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>RIDER MANAGER <span class="version">v1.1</span></h1>
+        <input type="text" id="nombre-agrupacion" class="input-agrupacion" value="BANDA SINFÓNICA DE MUESTRA" oninput="actualizarTitulo()">
+    </header>
+
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="panel">
+                <h2 id="form-title">Añadir Fila / Sección</h2>
+                <input type="hidden" id="edit-index" value="-1">
+                
+                <div class="form-group">
+                    <label for="nombre-seccion">Nombre de la Sección (Ej: Clarinetes 1º)</label>
+                    <input type="text" id="nombre-seccion" placeholder="Escribe el nombre a tu gusto...">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Geometría</label>
+                    <div class="radio-group">
+                        <label class="radio-label"><input type="radio" name="forma" value="semicirculo" checked> Semicírculo</label>
+                        <label class="radio-label"><input type="radio" name="forma" value="recta"> Recta (Orquesta/BigBand)</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Alineación en Escenario</label>
+                    <div class="radio-group">
+                        <label class="radio-label"><input type="radio" name="alineacion" value="Centro" checked> Centro</label>
+                        <label class="radio-label"><input type="radio" name="alineacion" value="Izquierda"> Izquierda</label>
+                        <label class="radio-label"><input type="radio" name="alineacion" value="Derecha"> Derecha</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label Zor for="cant-sillas">Cantidad de Sillas (Músicos)</label>
+                    <input type="number" id="cant-sillas" min="0" value="4">
+                </div>
+
+                <div class="form-group">
+                    <label for="cant-atriles">Cantidad de Atriles</label>
+                    <input type="number" id="cant-atriles" min="0" value="2">
+                </div>
+
+                <div class="form-group" id="bloque-percusión-checks">
+                    <label>Instrumentos de Percución (Opcional)</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" id="p-timbales"> Timbales</label>
+                        <label class="checkbox-label"><input type="checkbox" id="p-placas"> Placas</label>
+                        <label class="checkbox-label"><input type="checkbox" id="p-tambores"> Tambores/Bombo</label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="btn-guardar-fila" onclick="guardarFila()">Agregar al Escenario</button>
+                <button class="btn-primary btn-export" onclick="window.print()">Exportar Rider (PDF)</button>
+            </div>
+
+            <div class="panel">
+                <h2>Secciones en Escenario</h2>
+                <div id="lista-filas-agregadas">
+                    </div>
+            </div>
+        </div>
+
+        <div class="stage-preview" id="rider-impresion">
+            <div>
+                <div class="stage-title" id="preview-titulo">BANDA SINFÓNICA DE MUESTRA</div>
+                <div style="text-align: center; font-size: 13px; margin-bottom: 20px; font-weight: 500;">PLANO DE ESCENARIO Y REQUERIMIENTOS</div>
+                
+                <div class="stage-canvas" id="canvas-escenario">
+                    <div style="color: #999; font-size: 13px;" id="placeholder-text">El escenario está vacío. Añade secciones instrumentales.</div>
+                </div>
+            </div>
+
+            <div>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Requerimiento Técnico</th>
+                            <th>Cantidad Total</th>
+                            <th>Detalle de Secciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sillas de Orquesta</strong></td>
+                            <td id="total-sillas">0</td>
+                            <td id="detalle-sillas">-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Atriles Metálicos Pesados</strong></td>
+                            <td id="total-atriles">0</td>
+                            <td id="detalle-atriles">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <footer>
+                    PANDEMIA PRODUCCIONES • Riders para Agrupaciones 2026
+                </footer>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Memoria volátil de la sesión (Estructura de datos central)
+    let listaFilas = [];
+
+    function actualizarTitulo() {
+        const nombre = document.getElementById('nombre-agrupacion').value;
+        document.getElementById('preview-titulo').innerText = nombre ? nombre : "RIDER TÉCNICO";
+    }
+
+    function guardarFila() {
+        const nombre = document.getElementById('nombre-seccion').value.trim() || "Sección Sin Nombre";
+        const forma = document.querySelector('input[name="forma"]:checked').value;
+        const alineacion = document.querySelector('input[name="alineacion"]:checked').value;
+        const sillas = parseInt(document.getElementById('cant-sillas').value) || 0;
+        const atriles = parseInt(document.getElementById('cant-atriles').value) || 0;
+        
+        // Recolección de percusión
+        let perc_instrumentos = [];
+        if(document.getElementById('p-timbales').checked) perc_instrumentos.push("Timbales");
+        if(document.getElementById('p-placas').checked) perc_instrumentos.push("Placas");
+        if(document.getElementById('p-tambores').checked) perc_instrumentos.push("Tambores/Bombo");
+
+        const editIndex = parseInt(document.getElementById('edit-index').value);
+
+        const datosFila = { nombre, forma, alineacion, sillas, atriles, perc_instrumentos };
+
+        if (editIndex === -1) {
+            // Añadir nueva fila
+            listaFilas.push(datosFila);
+        } else {
+            // Guardar edición
+            listaFilas[editIndex] = datosFila;
+            document.getElementById('edit-index').value = "-1";
+            document.getElementById('form-title').innerText = "Añadir Fila / Sección";
+            document.getElementById('btn-guardar-fila').innerText = "Agregar al Escenario";
+        }
+
+        resetFormulario();
+        renderizarTodo();
+    }
+
+    function resetFormulario() {
+        document.getElementById('nombre-seccion').value = "";
+        document.getElementById('cant-sillas').value = "4";
+        document.getElementById('cant-atriles').value = "2";
+        document.getElementById('p-timbales').checked = false;
+        document.getElementById('p-placas').checked = false;
+        document.getElementById('p-tambores').checked = false;
+    }
+
+    function eliminarFila(index) {
+        listaFilas.splice(index, 1);
+        renderizarTodo();
+    }
+
+    function iniciarEdicion(index) {
+        const fila = listaFilas[index];
+        document.getElementById('nombre-seccion').value = fila.nombre;
+        document.getElementById('cant-sillas').value = fila.sillas;
+        document.getElementById('cant-atriles').value = fila.atriles;
+        
+        document.querySelector(`input[name="forma"][value="${fila.forma}"]`).checked = true;
+        document.querySelector(`input[name="alineacion"][value="${fila.alineacion}"]`).checked = true;
+        
+        document.getElementById('p-timbales').checked = fila.perc_instrumentos.includes("Timbales");
+        document.getElementById('p-placas').checked = fila.perc_instrumentos.includes("Placas");
+        document.getElementById('p-tambores').checked = fila.perc_instrumentos.includes("Tambores/Bombo");
+
+        document.getElementById('edit-index').value = index;
+        document.getElementById('form-title').innerText = "Editando Sección";
+        document.getElementById('btn-guardar-fila').innerText = "Actualizar Sección";
+    }
+
+    function renderizarTodo() {
+        const contenedorLista = document.getElementById('lista-filas-agregadas');
+        const contenedorEscenario = document.getElementById('canvas-escenario');
+        const placeholder = document.getElementById('placeholder-text');
+
+        // Limpiar contenedores
+        contenedorLista.innerHTML = "";
+        contenedorEscenario.innerHTML = "";
+
+        if (listaFilas.length === 0) {
+            placeholder.style.display = "block";
+            contenedorEscenario.appendChild(placeholder);
+            document.getElementById('total-sillas').innerText = "0";
+            document.getElementById('total-atriles').innerText = "0";
+            document.getElementById('detalle-sillas').innerText = "-";
+            document.getElementById('detalle-atriles').innerText = "-";
+            return;
+        }
+
+        let sumaSillas = 0;
+        let sumaAtriles = 0;
+        let nombresSillas = [];
+        let nombresAtriles = [];
+
+        listaFilas.forEach((fila, idx) => {
+            sumaSillas += fila.sillas;
+            sumaAtriles += fila.atriles;
+            if(fila.sillas > 0) nombresSillas.push(`${fila.nombre} (${fila.sillas})`);
+            if(fila.atriles > 0) nombresAtriles.push(`${fila.nombre} (${fila.atriles})`);
+
+            // 1. Renderizar en el panel de control izquierdo
+            const item = document.createElement('div');
+            item.className = "fila-item";
+            item.innerHTML = `
+                <div class="fila-info">
+                    <strong>${fila.nombre}</strong><br>
+                    <small>${fila.sillas} Sillas | ${fila.atriles} Atriles | ${fila.alineacion} | ${fila.forma}</small>
+                </div>
+                <div class="fila-actions">
+                    <button class="btn-action btn-edit" onclick="iniciarEdicion(${idx})">Editar</button>
+                    <button class="btn-action btn-del" onclick="eliminarFila(${idx})">X</button>
+                </div>
+            `;
+            contenedorLista.appendChild(item);
+
+            // 2. Renderizar visualmente en el plano del escenario (Derecha)
+            const bloqueVisual = document.createElement('div');
+            bloqueVisual.className = `stage-row-visual forma-${fila.forma}`;
+            
+            // Tratamiento visual de los iconos e info interna de la fila
+            let stringVisual = `${fila.nombre.toUpperCase()} ➔ `;
+            
+            // Iconografía de Sillas (🪑)
+            if(fila.sillas > 0) stringVisual += ` 🪑x${fila.sillas}`;
+            // Iconografía de Atriles (🎼)
+            if(fila.atriles > 0) stringVisual += ` 🎼x${fila.atriles}`;
+            // Detalle de instrumentos si es estación de percusión
+            if(fila.perc_instrumentos.length > 0) {
+                stringVisual += ` [📦 Percusión: ${fila.perc_instrumentos.join(', ')}]`;
+            }
+            
+            stringVisual += ` | Posición: ${fila.alineacion}`;
+            bloqueVisual.innerText = stringVisual;
+            
+            // Ajustar margen o alineación simulada en base a la decisión del usuario
+            if(fila.alineacion === "Izquierda") bloqueVisual.style.marginRight = "auto";
+            if(fila.alineacion === "Derecha") bloqueVisual.style.marginLeft = "auto";
+
+            contenedorEscenario.appendChild(bloqueVisual);
+        });
+
+        // Atualizar Totales de la Fila Logística
+        document.getElementById('total-sillas').innerText = sumaSillas;
+        document.getElementById('total-atriles').innerText = sumaAtriles;
+        document.getElementById('detalle-sillas').innerText = nombresSillas.join(', ') || "Ninguno";
+        document.getElementById('detalle-atriles').innerText = nombresAtriles.join(', ') || "Ninguno";
+    }
+</script>
+
+</body>
+</html>
