@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIDER MANAGER v1.7</title>
+    <title>RIDER MANAGER v1.8</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -267,7 +267,7 @@
 
 <div class="container">
     <header>
-        <h1>RIDER MANAGER <span class="version">v1.7</span></h1>
+        <h1>RIDER MANAGER <span class="version">v1.8</span></h1>
         <input type="text" id="nombre-agrupacion" class="input-agrupacion" value="BANDA SINFÓNICA DE MUESTRA" oninput="actualizarTitulo()">
     </header>
 
@@ -503,7 +503,9 @@
             // 1. RENDER PERCUSIÓN
             if(fila.tipo === 'percursion' && fila.sillas > 0) {
                 const posYPercusion = 450 - (profundidadActual * 70);
-                svg.innerHTML += `<text x="400" y="${posYPercusion - 15}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
+                
+                // Texto separado de los iconos (aumentado a -25 para evitar colisiones)
+                svg.innerHTML += `<text x="400" y="${posYPercusion - 25}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
 
                 const inicioX = 150;
                 const finX = 650;
@@ -516,9 +518,10 @@
                         <g transform="translate(${posX}, ${posYPercusion})">
                             <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#000000" stroke-width="1.2" stroke-dasharray="2,2"/>
                             <text x="0" y="3" font-family='Montserrat' font-size="8" font-weight="600" text-anchor="middle">P</text>
-                            <g transform="translate(0, -12)">
-                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/>
-                                <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/>
+                            
+                            <g transform="translate(0, 16)">
+                                <line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/>
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/>
                             </g>
                         </g>
                     `;
@@ -582,8 +585,11 @@
             // 3. RENDER FILA RECTA
             else if(fila.tipo === 'recta') {
                 const posYSillas = 450 - (profundidadActual * 70);
-                const posYAtriles = posYSillas - 15; 
+                
+                // ATRIL CORREGIDO: Aumentamos en +18px en Y para que se dibuje ABAJO (más cerca del director) en lugar de atrás
+                const posYAtriles = posYSillas + 18; 
 
+                // Título separado correctamente (-25 en Y para que quede arriba de la fila)
                 svg.innerHTML += `<text x="400" y="${posYSillas - 25}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
 
                 let inicioX = 150;
@@ -609,12 +615,11 @@
                 if (fila.atriles > 0) {
                     const pasoAtriles = fila.atriles > 1 ? (finX - inicioX) / (fila.atriles - 1) : 0;
                     for(let i=0; i<fila.atriles; i++) {
-                        // AQUÍ ESTABA EL ERROR: pasoXAtriles fue corregido a pasoAtriles
                         const posX = fila.atriles > 1 ? (inicioX + (pasoAtriles * i)) : centroXUnico;
                         svg.innerHTML += `
                             <g transform="translate(${posX}, ${posYAtriles})">
-                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/>
-                                <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/>
+                                <line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/>
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/>
                             </g>
                         `;
                     }
