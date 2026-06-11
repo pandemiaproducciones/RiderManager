@@ -3,74 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIDER MANAGER v2.0</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>RIDER MANAGER v2.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --primary: #111111;
-            --bg: #f4f6f8;
-            --card: #ffffff;
-            --border: #b3b3b3;
-            --accent: #0056b3;
-            --danger: #bd2130;
-        }
-
+        :root { --primary: #111111; --bg: #f4f6f8; --card: #ffffff; --border: #b3b3b3; --accent: #0056b3; --danger: #bd2130; }
         body { font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--primary); margin: 0; padding: 20px; }
         .container { max-width: 1500px; margin: 0 auto; }
-        header { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        header { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; font-size: 24px; text-transform: uppercase; font-weight: 700; }
-        .version { font-size: 13px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 4px; margin-left: 10px; vertical-align: middle; }
-        .input-agrupacion { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600; padding: 10px; border: 2px dashed var(--accent); width: 420px; text-transform: uppercase; background: #f0f7ff; }
-        
+        .version { font-size: 13px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 4px; }
+        .input-agrupacion { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600; padding: 10px; border: 2px dashed var(--accent); width: 420px; text-transform: uppercase; }
         .main-layout { display: grid; grid-template-columns: 420px 1fr; gap: 25px; }
-        .panel { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .panel { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .panel h2 { margin-top: 0; font-size: 14px; text-transform: uppercase; border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 12px; text-transform: uppercase; }
-        select, input[type="text"], input[type="number"] { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Montserrat', sans-serif; }
+        select, input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Montserrat', sans-serif; }
         .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
         .radio-label { display: flex; align-items: center; gap: 5px; background: #e9ecef; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; }
-        
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 15px; font-weight: 700; cursor: pointer; text-transform: uppercase; width: 100%; border-radius: 4px; }
-        .btn-export { background: #1e7e34; margin-top: 10px; }
-
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; width: 100%; border-radius: 4px; }
         .fila-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #dee2e6; font-size: 13px; }
-        .fila-actions { display: flex; gap: 5px; }
-        .btn-action { padding: 4px 8px; font-size: 11px; font-weight: 600; border: none; border-radius: 3px; cursor: pointer; text-transform: uppercase; }
+        .btn-action { padding: 4px 8px; font-size: 11px; cursor: pointer; border: none; }
         .btn-edit { background: var(--accent); color: white; }
         .btn-del { background: var(--danger); color: white; }
-
-        /* PLANO TÉCNICO */
-        .document-container { background: #ffffff; border: 2px solid #000000; padding: 30px; }
+        .stage-box { border: 2px solid #000000; position: relative; width: 100%; height: 520px; background: #ffffff; }
         .doc-header-title { text-align: center; font-size: 26px; font-weight: 700; text-transform: uppercase; margin: 0; }
-        .doc-header-subtitle { text-align: center; font-size: 13px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #000000; padding-bottom: 8px; }
+        .doc-header-subtitle { text-align: center; font-size: 13px; font-weight: 600; margin-bottom: 20px; border-bottom: 2px solid #000000; }
         .doc-header-institucional { display: block; font-size: 13px; font-weight: 700; margin-top: 4px; }
-        .stage-box { border: 2px solid #000000; position: relative; width: 100%; height: 520px; background: #ffffff; margin-bottom: 20px; }
-        .technical-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .technical-table th, .technical-table td { border: 1px solid #000000; padding: 8px 10px; font-size: 12px; }
-        .technical-table th { background: #000000; color: #ffffff; text-transform: uppercase; font-weight: 700; font-size: 11px; }
-        .doc-footer { margin-top: 25px; text-align: center; font-size: 11px; font-weight: 600; border-top: 2px solid #000000; padding-top: 10px; text-transform: uppercase; }
-
-        @media print { body { background: #ffffff; padding: 0; } .sidebar, header { display: none !important; } .document-container { border: none; padding: 0; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>RIDER MANAGER <span class="version">v2.0</span></h1>
-        <input type="text" id="nombre-agrupacion" class="input-agrupacion" placeholder="[ ESCRIBE EL NOMBRE DE LA BANDA ]" oninput="actualizarTitulo()">
-    </header>
+    <header><h1>RIDER MANAGER <span class="version">v2.1</span></h1><input type="text" id="nombre-agrupacion" class="input-agrupacion" placeholder="[ ESCRIBE EL NOMBRE DE LA BANDA ]" oninput="actualizarTodo()"></header>
 
     <div class="main-layout">
         <div class="sidebar">
             <div class="panel">
                 <h2 id="form-title">Configurar Fila</h2>
                 <input type="hidden" id="edit-index" value="-1">
-                <div class="form-group"><label>Nombre de la Fila</label><input type="text" id="nombre-seccion"></div>
+                <div class="form-group"><label>Nombre</label><input type="text" id="nombre-seccion"></div>
                 <div class="form-group"><label>Tipo</label><div class="radio-group">
                     <label class="radio-label"><input type="radio" name="tipo-fila" value="arco" checked onclick="toggleCampos()"> Arco</label>
                     <label class="radio-label"><input type="radio" name="tipo-fila" value="recta" onclick="toggleCampos()"> Recta</label>
@@ -85,29 +57,20 @@
                 <div class="form-group"><label>Atriles</label><input type="number" id="cant-atriles" value="4"></div></div>
                 <div id="cantidades-percursion" style="display:none;"><div class="form-group"><label>Percusionistas</label><input type="number" id="cant-percusionistas" value="4"></div></div>
                 <button class="btn-primary" id="btn-guardar-fila" onclick="guardarFila()">Insertar al Plano</button>
-                <button class="btn-primary btn-export" onclick="window.print()">Exportar Rider</button>
             </div>
             <div class="panel"><h2>Secciones Agregadas</h2><div id="lista-filas-agregadas"></div></div>
         </div>
 
-        <div class="document-container" id="documento-impresion">
-            <div>
-                <h1 class="doc-header-title" id="doc-titulo">[ NOMBRE DE LA AGRUPACIÓN ]</h1>
-                <div class="doc-header-subtitle">
-                    Plano de Escenario y Requerimientos de Mobiliario
-                    <span class="doc-header-institucional">Programa Departamental de Bandas de Caldas</span>
-                </div>
-                <div class="stage-box"><svg id="stage-svg" width="100%" height="100%" viewBox="0 0 800 520"></svg></div>
-            </div>
-            <table class="technical-table"><thead><tr><th>ARTÍCULO</th><th>CANTIDAD</th><th>DESCRIPCIÓN</th></tr></thead><tbody id="tabla-totales-body"></tbody></table>
-            <div class="doc-footer">PANDEMIA PRODUCCIONES • Riders para Agrupaciones 2026</div>
+        <div class="document-container">
+            <h1 class="doc-header-title" id="doc-titulo">[ NOMBRE DE LA AGRUPACIÓN ]</h1>
+            <div class="doc-header-subtitle">Plano de Escenario<span class="doc-header-institucional">Programa Departamental de Bandas de Caldas</span></div>
+            <div class="stage-box"><svg id="stage-svg" width="100%" height="100%" viewBox="0 0 800 520"></svg></div>
         </div>
     </div>
 </div>
 
 <script>
     let listaFilas = [];
-    function actualizarTitulo() { document.getElementById('doc-titulo').innerText = document.getElementById('nombre-agrupacion').value.toUpperCase() || "[ NOMBRE DE LA AGRUPACIÓN ]"; }
     function toggleCampos() { const tipo = document.querySelector('input[name="tipo-fila"]:checked').value; document.getElementById('opciones-geometria').style.display = (tipo === 'percursion') ? 'none' : 'block'; document.getElementById('cantidades-vientos').style.display = (tipo === 'percursion') ? 'none' : 'block'; document.getElementById('cantidades-percursion').style.display = (tipo === 'percursion') ? 'block' : 'none'; }
     
     function guardarFila() {
@@ -122,38 +85,50 @@
         actualizarTodo();
     }
 
-    function actualizarTodo() {
-        document.getElementById('lista-filas-agregadas').innerHTML = "";
-        const svg = document.getElementById('stage-svg'); svg.innerHTML = "";
-        let totalSillas = 0, totalAtriles = 0, totalPercusionistas = 0, vientosCount = 0;
+    function eliminarFila(idx) { listaFilas.splice(idx, 1); actualizarTodo(); }
 
-        svg.innerHTML += `<rect x="375" y="460" width="50" height="35" fill="#ffffff" stroke="#000000" stroke-width="1.5"/><text x="400" y="481" font-family='Montserrat' font-size="9" font-weight="700" text-anchor="middle">DIRECTOR</text>`;
+    function actualizarTodo() {
+        document.getElementById('doc-titulo').innerText = document.getElementById('nombre-agrupacion').value.toUpperCase() || "[ NOMBRE DE LA AGRUPACIÓN ]";
+        const lista = document.getElementById('lista-filas-agregadas'); lista.innerHTML = "";
+        const svg = document.getElementById('stage-svg'); svg.innerHTML = "";
+        svg.innerHTML += `<rect x="375" y="460" width="50" height="35" fill="none" stroke="#000000"/><text x="400" y="482" font-size="9" font-weight="700" text-anchor="middle">DIR</text>`;
 
         listaFilas.forEach((fila, idx) => {
-            if(fila.tipo !== 'percursion') vientosCount++;
-            const prof = (fila.tipo === 'percursion') ? (vientosCount + 1) : vientosCount;
+            lista.innerHTML += `<div class="fila-item"><div><strong>${fila.nombre}</strong><br><small>${fila.tipo}</small></div><div class="fila-actions"><button class="btn-action btn-del" onclick="eliminarFila(${idx})">X</button></div></div>`;
             
-            // RENDER LÓGICA DE ICONOS
+            const prof = idx + 1;
             if(fila.tipo === 'percursion') {
                 const y = 450 - (prof * 70);
+                svg.innerHTML += `<text x="400" y="${y-15}" font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
                 for(let i=0; i<fila.sillas; i++) {
                     const x = 400 + ((i - (fila.sillas-1)/2) * 35);
                     svg.innerHTML += `<g transform="translate(${x}, ${y})"><rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#000000" stroke-dasharray="2,2"/><text x="0" y="3" font-size="8" text-anchor="middle">P</text><g transform="translate(0, 16)"><line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/></g></g>`;
                 }
-            } else {
-                const rSilla = 70 + (prof * 70);
-                const rAtril = rSilla - 22;
-                // Render silla tipo "Caja + Respaldo"
+            } else if(fila.tipo === 'arco') {
+                const rSilla = 70 + (prof * 70), rAtril = rSilla - 22;
+                let angI = fila.alineacion === 'Izquierda' ? 200 : fila.alineacion === 'Derecha' ? 270 : 200;
+                let angF = fila.alineacion === 'Izquierda' ? 270 : fila.alineacion === 'Derecha' ? 340 : 340;
+                svg.innerHTML += `<text x="400" y="${500 + rSilla*Math.sin(270*Math.PI/180) - 10}" font-size="8" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
                 for(let i=0; i<fila.sillas; i++) {
-                    const ang = 200 + (140/(fila.sillas>1?fila.sillas-1:1)*i);
+                    const ang = angI + ((angF-angI)/(fila.sillas>1?fila.sillas-1:1)*i);
                     const rad = ang * Math.PI/180;
                     svg.innerHTML += `<g transform="translate(${400 + rSilla*Math.cos(rad)}, ${500 + rSilla*Math.sin(rad)}) rotate(${ang+90})"><rect x="-7" y="-7" width="14" height="13" rx="1" fill="none" stroke="#000000"/><line x1="-7" y1="-7" x2="7" y2="-7" stroke="#000000" stroke-width="2.5"/></g>`;
                 }
-                // Render atril tipo "T"
                 for(let i=0; i<fila.atriles; i++) {
-                    const ang = 200 + (140/(fila.atriles>1?fila.atriles-1:1)*i);
+                    const ang = angI + ((angF-angI)/(fila.atriles>1?fila.atriles-1:1)*i);
                     const rad = ang * Math.PI/180;
                     svg.innerHTML += `<g transform="translate(${400 + rAtril*Math.cos(rad)}, ${500 + rAtril*Math.sin(rad)}) rotate(${ang+90})"><line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/></g>`;
+                }
+            } else {
+                const y = 450 - (prof * 70);
+                svg.innerHTML += `<text x="400" y="${y-15}" font-size="8" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
+                for(let i=0; i<fila.sillas; i++) {
+                    const x = 400 + ((i - (fila.sillas-1)/2) * 30);
+                    svg.innerHTML += `<g transform="translate(${x}, ${y})"><rect x="-7" y="-7" width="14" height="13" rx="1" fill="none" stroke="#000000"/><line x1="-7" y1="-7" x2="7" y2="-7" stroke="#000000" stroke-width="2.5"/></g>`;
+                }
+                for(let i=0; i<fila.atriles; i++) {
+                    const x = 400 + ((i - (fila.atriles-1)/2) * 30);
+                    svg.innerHTML += `<g transform="translate(${x}, ${y+18})"><line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/><line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/></g>`;
                 }
             }
         });
