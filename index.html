@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIDER MANAGER v2.1</title>
+    <title>RIDER MANAGER v2.2</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #111111; --bg: #f4f6f8; --card: #ffffff; --border: #b3b3b3; --accent: #0056b3; --danger: #bd2130; }
@@ -12,30 +12,34 @@
         header { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
         h1 { margin: 0; font-size: 24px; text-transform: uppercase; font-weight: 700; }
         .version { font-size: 13px; background: var(--primary); color: white; padding: 4px 10px; border-radius: 4px; }
-        .input-agrupacion { font-family: 'Montserrat', sans-serif; font-size: 16px; font-weight: 600; padding: 10px; border: 2px dashed var(--accent); width: 420px; text-transform: uppercase; }
+        .input-agrupacion { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 600; padding: 8px; border: 1px dashed var(--border); width: 350px; text-transform: uppercase; }
         .main-layout { display: grid; grid-template-columns: 420px 1fr; gap: 25px; }
         .panel { background: var(--card); border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .panel h2 { margin-top: 0; font-size: 14px; text-transform: uppercase; border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 12px; text-transform: uppercase; }
-        select, input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Montserrat', sans-serif; }
+        input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; font-family: 'Montserrat', sans-serif; }
         .radio-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
         .radio-label { display: flex; align-items: center; gap: 5px; background: #e9ecef; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 500; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; width: 100%; border-radius: 4px; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; width: 100%; border-radius: 4px; margin-top: 5px; }
+        .btn-export { background: #1e7e34; }
         .fila-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #dee2e6; font-size: 13px; }
+        .fila-actions { display: flex; gap: 5px; }
         .btn-action { padding: 4px 8px; font-size: 11px; cursor: pointer; border: none; }
         .btn-edit { background: var(--accent); color: white; }
         .btn-del { background: var(--danger); color: white; }
         .stage-box { border: 2px solid #000000; position: relative; width: 100%; height: 520px; background: #ffffff; }
+        .document-container { background: #ffffff; border: 2px solid #000000; padding: 30px; }
         .doc-header-title { text-align: center; font-size: 26px; font-weight: 700; text-transform: uppercase; margin: 0; }
         .doc-header-subtitle { text-align: center; font-size: 13px; font-weight: 600; margin-bottom: 20px; border-bottom: 2px solid #000000; }
-        .doc-header-institucional { display: block; font-size: 13px; font-weight: 700; margin-top: 4px; }
+        .doc-header-institucional { display: block; font-weight: 700; margin-top: 4px; }
+        @media print { body { background: #ffffff; padding: 0; } .sidebar, header { display: none !important; } .document-container { border: none; padding: 0; } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header><h1>RIDER MANAGER <span class="version">v2.1</span></h1><input type="text" id="nombre-agrupacion" class="input-agrupacion" placeholder="[ ESCRIBE EL NOMBRE DE LA BANDA ]" oninput="actualizarTodo()"></header>
+    <header><h1>RIDER MANAGER <span class="version">v2.2</span></h1><input type="text" id="nombre-agrupacion" class="input-agrupacion" placeholder="NOMBRE DE LA BANDA" oninput="actualizarTodo()"></header>
 
     <div class="main-layout">
         <div class="sidebar">
@@ -43,12 +47,12 @@
                 <h2 id="form-title">Configurar Fila</h2>
                 <input type="hidden" id="edit-index" value="-1">
                 <div class="form-group"><label>Nombre</label><input type="text" id="nombre-seccion"></div>
-                <div class="form-group"><label>Tipo</label><div class="radio-group">
+                <div class="form-group"><label>Tipo</label><div class="radio-group" id="radio-tipo">
                     <label class="radio-label"><input type="radio" name="tipo-fila" value="arco" checked onclick="toggleCampos()"> Arco</label>
                     <label class="radio-label"><input type="radio" name="tipo-fila" value="recta" onclick="toggleCampos()"> Recta</label>
                     <label class="radio-label"><input type="radio" name="tipo-fila" value="percursion" onclick="toggleCampos()"> Percusión</label>
                 </div></div>
-                <div id="opciones-geometria"><div class="form-group"><label>Alineación</label><div class="radio-group">
+                <div id="opciones-geometria"><div class="form-group"><label>Alineación</label><div class="radio-group" id="radio-alineacion">
                     <label class="radio-label"><input type="radio" name="alineacion" value="Centro" checked> Centro</label>
                     <label class="radio-label"><input type="radio" name="alineacion" value="Izquierda"> Izquierda</label>
                     <label class="radio-label"><input type="radio" name="alineacion" value="Derecha"> Derecha</label>
@@ -57,12 +61,13 @@
                 <div class="form-group"><label>Atriles</label><input type="number" id="cant-atriles" value="4"></div></div>
                 <div id="cantidades-percursion" style="display:none;"><div class="form-group"><label>Percusionistas</label><input type="number" id="cant-percusionistas" value="4"></div></div>
                 <button class="btn-primary" id="btn-guardar-fila" onclick="guardarFila()">Insertar al Plano</button>
+                <button class="btn-primary btn-export" onclick="window.print()">Exportar Rider</button>
             </div>
             <div class="panel"><h2>Secciones Agregadas</h2><div id="lista-filas-agregadas"></div></div>
         </div>
 
         <div class="document-container">
-            <h1 class="doc-header-title" id="doc-titulo">[ NOMBRE DE LA AGRUPACIÓN ]</h1>
+            <h1 class="doc-header-title" id="doc-titulo">NOMBRE DE LA BANDA</h1>
             <div class="doc-header-subtitle">Plano de Escenario<span class="doc-header-institucional">Programa Departamental de Bandas de Caldas</span></div>
             <div class="stage-box"><svg id="stage-svg" width="100%" height="100%" viewBox="0 0 800 520"></svg></div>
         </div>
@@ -82,20 +87,39 @@
         const editIndex = parseInt(document.getElementById('edit-index').value);
         const datos = { nombre, tipo, sillas, atriles, alineacion };
         if(editIndex === -1) listaFilas.push(datos); else listaFilas[editIndex] = datos;
+        
+        // Reset a por defecto
+        document.getElementById('nombre-seccion').value = "";
+        document.querySelectorAll('input[name="tipo-fila"]')[0].checked = true;
+        document.querySelectorAll('input[name="alineacion"]')[0].checked = true;
+        document.getElementById('edit-index').value = "-1";
+        document.getElementById('btn-guardar-fila').innerText = "Insertar al Plano";
+        toggleCampos();
         actualizarTodo();
+    }
+
+    function editarFila(idx) {
+        const fila = listaFilas[idx];
+        document.getElementById('nombre-seccion').value = fila.nombre;
+        document.querySelector(`input[name="tipo-fila"][value="${fila.tipo}"]`).checked = true;
+        document.querySelector(`input[name="alineacion"][value="${fila.alineacion}"]`).checked = true;
+        if(fila.tipo === 'percursion') document.getElementById('cant-percusionistas').value = fila.sillas;
+        else { document.getElementById('cant-sillas').value = fila.sillas; document.getElementById('cant-atriles').value = fila.atriles; }
+        document.getElementById('edit-index').value = idx;
+        document.getElementById('btn-guardar-fila').innerText = "Guardar Cambios";
+        toggleCampos();
     }
 
     function eliminarFila(idx) { listaFilas.splice(idx, 1); actualizarTodo(); }
 
     function actualizarTodo() {
-        document.getElementById('doc-titulo').innerText = document.getElementById('nombre-agrupacion').value.toUpperCase() || "[ NOMBRE DE LA AGRUPACIÓN ]";
+        document.getElementById('doc-titulo').innerText = document.getElementById('nombre-agrupacion').value.toUpperCase() || "NOMBRE DE LA BANDA";
         const lista = document.getElementById('lista-filas-agregadas'); lista.innerHTML = "";
         const svg = document.getElementById('stage-svg'); svg.innerHTML = "";
         svg.innerHTML += `<rect x="375" y="460" width="50" height="35" fill="none" stroke="#000000"/><text x="400" y="482" font-size="9" font-weight="700" text-anchor="middle">DIR</text>`;
 
         listaFilas.forEach((fila, idx) => {
-            lista.innerHTML += `<div class="fila-item"><div><strong>${fila.nombre}</strong><br><small>${fila.tipo}</small></div><div class="fila-actions"><button class="btn-action btn-del" onclick="eliminarFila(${idx})">X</button></div></div>`;
-            
+            lista.innerHTML += `<div class="fila-item"><div><strong>${fila.nombre}</strong><br><small>${fila.tipo}</small></div><div class="fila-actions"><button class="btn-action btn-edit" onclick="editarFila(${idx})">E</button><button class="btn-action btn-del" onclick="eliminarFila(${idx})">X</button></div></div>`;
             const prof = idx + 1;
             if(fila.tipo === 'percursion') {
                 const y = 450 - (prof * 70);
