@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIDER MANAGER v1.5</title>
+    <title>RIDER MANAGER v1.6</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -267,7 +267,7 @@
 
 <div class="container">
     <header>
-        <h1>RIDER MANAGER <span class="version">v1.5</span></h1>
+        <h1>RIDER MANAGER <span class="version">v1.6</span></h1>
         <input type="text" id="nombre-agrupacion" class="input-agrupacion" value="BANDA SINFÓNICA DE MUESTRA" oninput="actualizarTodo()">
     </header>
 
@@ -278,7 +278,7 @@
                 <input type="hidden" id="edit-index" value="-1">
                 
                 <div class="form-group">
-                    <label for="nombre-seccion">Nombre de la Fila (Ej: FILA 1 (Madera) o Percusión General)</label>
+                    <label for="nombre-seccion">Nombre de la Fila (Ej: Clarinetes 1º o Saxos)</label>
                     <input type="text" id="nombre-seccion" placeholder="Escribe la etiqueta de la fila...">
                 </div>
 
@@ -293,20 +293,11 @@
 
                 <div id="opciones-geometria">
                     <div class="form-group">
-                        <label for="nivel-arco">Fila / Profundidad (1 interna al 4 externa)</label>
-                        <select id="nivel-arco">
-                            <option value="1">Fila 1 (Cercana)</option>
-                            <option value="2">Fila 2</option>
-                            <option value="3">Fila 3</option>
-                            <option value="4">Fila 4 (Lejana)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label>Alineación Lateral</label>
                         <div class="radio-group">
                             <label class="radio-label"><input type="radio" name="alineacion" value="Centro" checked> Completo / Centro</label>
-                            <label class="radio-label"><input type="radio" name="alineacion" value="Izquierda"> Izquierda</label>
-                            <label class="radio-label"><input type="radio" name="alineacion" value="Derecha"> Derecha</label>
+                            <label class="radio-label"><input type="radio" name="alineacion" value="Izquierda"> Izquierda (Hasta el Centro)</label>
+                            <label class="radio-label"><input type="radio" name="alineacion" value="Derecha"> Derecha (Hasta el Centro)</label>
                         </div>
                     </div>
                 </div>
@@ -317,7 +308,7 @@
                         <input type="number" id="cant-sillas" min="0" value="8">
                     </div>
                     <div class="form-group">
-                        <label for="cant-atriles">Número de Atriles</label>
+                        <label_for="cant-atriles">Número de Atriles</label>
                         <input type="number" id="cant-atriles" min="0" value="4">
                     </div>
                 </div>
@@ -335,7 +326,7 @@
             </div>
 
             <div class="panel">
-                <h2>Secciones Agregadas</h2>
+                <h2>Secciones Agregadas (En Orden de Asiento)</h2>
                 <div id="lista-filas-agregadas"></div>
             </div>
         </div>
@@ -386,20 +377,18 @@
         
         let sillas = 0;
         let atriles = 0;
-        let nivel = document.getElementById('nivel-arco').value;
         const alineacion = document.querySelector('input[name="alineacion"]:checked').value;
 
         if (tipo === 'percursion') {
             sillas = parseInt(document.getElementById('cant-percusionistas').value) || 0;
             atriles = sillas; 
-            nivel = "0";      
         } else {
             sillas = parseInt(document.getElementById('cant-sillas').value) || 0;
             atriles = parseInt(document.getElementById('cant-atriles').value) || 0;
         }
 
         const editIndex = parseInt(document.getElementById('edit-index').value);
-        const datos = { nombre, tipo, sillas, atriles, nivel, alineacion };
+        const datos = { nombre, tipo, sillas, atriles, alineacion };
 
         if(editIndex === -1) {
             listaFilas.push(datos);
@@ -435,7 +424,6 @@
         if(fila.tipo !== 'percursion') {
             document.getElementById('cant-sillas').value = fila.sillas;
             document.getElementById('cant-atriles').value = fila.atriles;
-            document.getElementById('nivel-arco').value = fila.nivel;
             document.querySelector(`input[name="alineacion"][value="${fila.alineacion}"]`).checked = true;
         } else {
             document.getElementById('cant-percusionistas').value = fila.sillas;
@@ -457,23 +445,7 @@
         const centerX = 400; 
         const centerY = 500; 
 
-        const baseRadiosArcos = { "1": 140, "2": 210, "3": 280, "4": 350 };
-
-        // DETECTAR PROFUNDIDAD MÁXIMA ACTIVA DE LOS VIENTOS
-        let filaMaximaVientos = 0;
-        listaFilas.forEach(f => {
-            if (f.tipo !== 'percursion') {
-                let n = parseInt(f.nivel);
-                if (n > filaMaximaVientos) filaMaximaVientos = n;
-            }
-        });
-
-        if (filaMaximaVientos === 0) filaMaximaVientos = 2; 
-
-        // Ubicación de la recta de percusión inmediatamente superior
-        const posYPercusionDinamica = 450 - ((filaMaximaVientos + 1) * 70);
-
-        // Render del podio estático del Director
+        // Render del podio del Director
         svg.innerHTML += `
             <rect x="375" y="460" width="50" height="35" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
             <text x="400" y="481" font-family='Montserrat' font-size="9" font-weight="700" text-anchor="middle">DIRECTOR</text>
@@ -481,6 +453,9 @@
 
         let totalSillas = 0, totalAtriles = 0, totalPercusionistas = 0;
         let descSillas = [], descAtriles = [], descPercusion = [];
+
+        // CONTADORES PARA DETERMINAR PROFUNDIDAD SUCESIVA AUTOMÁTICA
+        let indiceVientoSucesivo = 0; 
 
         listaFilas.forEach((fila, idx) => {
             if (fila.tipo === 'percursion') {
@@ -491,6 +466,7 @@
                 totalAtriles += fila.atriles;
                 if(fila.sillas > 0) descSillas.push(`${fila.nombre} (${fila.sillas})`);
                 if(fila.atriles > 0) descAtriles.push(`${fila.nombre} (${fila.atriles})`);
+                indiceVientoSucesivo++; // Incrementa automáticamente al procesar vientos
             }
 
             const item = document.createElement('div');
@@ -498,7 +474,7 @@
             item.innerHTML = `
                 <div>
                     <strong>${fila.nombre}</strong><br>
-                    <small>${fila.tipo === 'percursion' ? fila.sillas+' Percusionistas' : fila.sillas+'S / '+fila.atriles+'A'}</small>
+                    <small>${fila.tipo === 'percursion' ? 'Sección Percusión' : fila.tipo.toUpperCase() + ' | ' + fila.alineacion}</small>
                 </div>
                 <div class="fila-actions">
                     <button class="btn-action btn-edit" onclick="iniciarEdicion(${idx})">Editar</button>
@@ -507,9 +483,18 @@
             `;
             document.getElementById('lista-filas-agregadas').appendChild(item);
 
+            // CALCULAR PROFUNDIDAD EN BASE AL ORDEN EN QUE FUERON INGRESADOS
+            let profundidadActual = indiceVientoSucesivo;
+            if (fila.tipo === 'percursion') {
+                // Si no hay vientos previos, asume una holgura base estándar
+                let vientosTotales Activos = listaFilas.filter(f => f.tipo !== 'percursion').length;
+                profundidadActual = (vientosTotalesActivos > 0) ? vientosTotalesActivos + 1 : 2;
+            }
+
             // 1. RENDER SECCIÓN DE PERCUSIÓN (SIEMPRE EN FILA RECTA COMPACTA ACCESIBLE)
             if(fila.tipo === 'percursion' && fila.sillas > 0) {
-                svg.innerHTML += `<text x="400" y="${posYPercusionDinamica - 15}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
+                const posYPercusion = 450 - (profundidadActual * 70);
+                svg.innerHTML += `<text x="400" y="${posYPercusion - 15}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
 
                 const totalElementos = fila.sillas;
                 const inicioX = 150;
@@ -521,37 +506,39 @@
                     const posX = totalElementos > 1 ? (inicioX + (pasoX * i)) : centroXUnico;
 
                     let boxPercusion = `
-                        <g transform="translate(${posX}, ${posYPercusionDinamica})">
+                        <g transform="translate(${posX}, ${posYPercusion})">
                             <rect x="-10" y="-10" width="20" height="20" fill="none" stroke="#000000" stroke-width="1.2" stroke-dasharray="2,2"/>
                             <text x="0" y="3" font-family='Montserrat' font-size="8" font-weight="600" text-anchor="middle">P</text>
                             
                             <g transform="translate(0, -12)">
-                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/> <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/> </g>
+                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/>
+                                <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/>
+                            </g>
                         </g>
                     `;
                     svg.innerHTML += boxPercusion;
                 }
             }
-            // 2. RENDER ARCO CONCÉNTRICO (DISTRIBUCIÓN SIMÉTRICA PARALELA E INDEPENDIENTE)
+            // 2. RENDER ARCO CONCÉNTRICO SUCESIVO AUTOMÁTICO
             else if(fila.tipo === 'arco') {
-                const radioSillas = baseRadiosArcos[fila.nivel];
-                const radioAtriles = radioSillas - 16; // Separación física: Atriles más adelantados hacia el centro
+                const radioSillas = 70 + (profundidadActual * 70); 
+                const radioAtriles = radioSillas - 18; 
 
+                // LÍMITES AJUSTADOS: Lateralidad estricta desde el costado hasta el centro (90 grados de margen)
                 let anguloInicio = 200; 
                 let anguloFin = 340;    
-                if(fila.alineacion === 'Izquierda') { anguloInicio = 195; anguloFin = 260; }
-                if(fila.alineacion === 'Derecha') { anguloInicio = 280; anguloFin = 345; }
+                if(fila.alineacion === 'Izquierda') { anguloInicio = 195; anguloFin = 270; }
+                if(fila.alineacion === 'Derecha') { anguloInicio = 270; anguloFin = 345; }
 
                 const anguloCentralUnico = anguloInicio + (anguloFin - anguloInicio) / 2;
 
-                // Texto identificador arqueado sutilmente
                 const anguloTexto = anguloCentralUnico * (Math.PI / 180);
                 const txtX = centerX + (radioSillas + 16) * Math.cos(anguloTexto);
                 const txtY = centerY + (radioSillas + 16) * Math.sin(anguloTexto);
                 const rotacionTexto = anguloCentralUnico + 90;
                 svg.innerHTML += `<text x="${txtX}" y="${txtY}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle" transform="rotate(${rotacionTexto}, ${txtX}, ${txtY})">${fila.nombre.toUpperCase()}</text>`;
 
-                // A. Distribuir e inyectar Sillas de forma independiente
+                // Distribuir Sillas
                 if (fila.sillas > 0) {
                     const pasoSillas = fila.sillas > 1 ? (anguloFin - anguloInicio) / (fila.sillas - 1) : 0;
                     for (let i = 0; i < fila.sillas; i++) {
@@ -570,7 +557,7 @@
                     }
                 }
 
-                // B. Distribuir e inyectar Atriles de forma independiente en su propio carril interior
+                // Distribuir Atriles en "T"
                 if (fila.atriles > 0) {
                     const pasoAtriles = fila.atriles > 1 ? (anguloFin - anguloInicio) / (fila.atriles - 1) : 0;
                     for (let i = 0; i < fila.atriles; i++) {
@@ -582,26 +569,29 @@
 
                         svg.innerHTML += `
                             <g transform="translate(${x}, ${y}) rotate(${rot})">
-                                <line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/> <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/> </g>
+                                <line x1="-7" y1="0" x2="7" y2="0" stroke="#000000" stroke-width="2"/>
+                                <line x1="0" y1="0" x2="0" y2="5" stroke="#000000" stroke-width="1.2"/>
+                            </g>
                         `;
                     }
                 }
             }
-            // 3. RENDER FILA RECTA (DISTRIBUCIÓN PARALELA E INDEPENDIENTE SEPARADA)
+            // 3. RENDER FILA RECTA SUCESIVA AUTOMÁTICA
             else if(fila.tipo === 'recta') {
-                const posYSillas = 450 - (fila.nivel * 70);
-                const posYAtriles = posYSillas - 15; // Atriles adelantados 15px al frente en línea recta
+                const posYSillas = 450 - (profundidadActual * 70);
+                const posYAtriles = posYSillas - 15; 
 
                 svg.innerHTML += `<text x="400" y="${posYSillas - 25}" font-family='Montserrat' font-size="8" font-weight="700" text-anchor="middle">${fila.nombre.toUpperCase()}</text>`;
 
+                // LÍMITES AJUSTADOS: Costado estricto hasta el centro matemático (X=400)
                 let inicioX = 150;
                 let finX = 650;
-                if(fila.alineacion === 'Izquierda') { inicioX = 100; finX = 380; }
-                if(fila.alineacion === 'Derecha') { inicioX = 420; finX = 700; }
+                if(fila.alineacion === 'Izquierda') { inicioX = 100; finX = 390; }
+                if(fila.alineacion === 'Derecha') { inicioX = 410; finX = 700; }
 
                 const centroXUnico = inicioX + (finX - inicioX) / 2;
 
-                // A. Distribuir Sillas rectas
+                // Distribuir Sillas
                 if (fila.sillas > 0) {
                     const pasoSillas = fila.sillas > 1 ? (finX - inicioX) / (fila.sillas - 1) : 0;
                     for(let i=0; i<fila.sillas; i++) {
@@ -615,21 +605,23 @@
                     }
                 }
 
-                // B. Distribuir Atriles rectos en "T"
+                // Distribuir Atriles en "T"
                 if (fila.atriles > 0) {
                     const pasoAtriles = fila.atriles > 1 ? (finX - inicioX) / (fila.atriles - 1) : 0;
                     for(let i=0; i<fila.atriles; i++) {
-                        const posX = fila.atriles > 1 ? (inicioX + (pasoXAtriles * i)) : centroXUnico;
+                        const posX = fila.atriles > 1 ? (inicioX + (pasoAtriles * i)) : centroXUnico;
                         svg.innerHTML += `
                             <g transform="translate(${posX}, ${posYAtriles})">
-                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/> <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/> </g>
+                                <line x1="-7" y1="-2" x2="7" y2="-2" stroke="#000000" stroke-width="2"/>
+                                <line x1="0" y1="-2" x2="0" y2="3" stroke="#000000" stroke-width="1.2"/>
+                            </g>
                         `;
                     }
                 }
             }
         });
 
-        // ACTUALIZACIÓN DE TABLA CONSOLIDADA LOGÍSTICA TOTAL
+        // RECONSTRUCCIÓN DE LA TABLA TÉCNICA CONSOLIDADA LOGÍSTICA TOTAL
         const totalAtrilesGlobal = totalAtriles + totalPercusionistas; 
 
         const tbody = document.getElementById('tabla-totales-body');
